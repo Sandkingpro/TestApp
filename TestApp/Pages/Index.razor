@@ -1,0 +1,69 @@
+﻿@page "/"
+@using System.Text.Json
+@inject IJSRuntime JS
+<p>
+     <button @onclick="TriggerPrompt">Save text</button>
+</p>
+<p>
+     <button @onclick="Function">Get text</button>
+</p>
+<p>
+     <button @onclick="Remove">Remove item</button>
+</p>
+<p>
+     <button @onclick="Clear">Clear storage</button>
+</p>
+@if (result != null)
+{
+     <Test_component result="@result"></Test_component>
+     <input type="text" size="10" @bind-value="@result"/>
+}
+else
+{
+     <p>Loading...</p>
+}
+
+
+
+
+
+
+@code{
+     private string? result;
+     LocalStorage LocalStorage;
+     protected override async Task OnInitializedAsync()
+     {
+          LocalStorage = new LocalStorage(JS);
+          await Task.Delay(500);
+          result = await LocalStorage.getItem("mykey");
+          StateHasChanged();
+     }
+     
+
+     private async Task TriggerPrompt()
+     {
+          if (result != null)
+          {
+               await LocalStorage.setItem("mykey",result);
+          }
+          
+     }
+
+     private async Task Function()
+     {
+          result = await LocalStorage.getItem("mykey");
+     }
+
+     private async Task Remove()
+     {
+          await LocalStorage.removeItem(result);
+     }
+
+     private async Task Clear()
+     {
+          await LocalStorage.Clear();
+     }
+     
+
+}
+
